@@ -7,39 +7,32 @@ Settings
 There are a bunch of values which you can define in your Django ``settings``
 module to modify the behaviour of ``webassets``.
 
-Note: This document places those values inside the ``django_assets.settings``
-module. This is irrelevant. To change the values, you need to define them
-in your project's global settings.
+.. note::
+
+    This document places those values inside the ``django_assets.settings``
+    module. This is irrelevant. To change the values, you need to define them
+    in your project's global settings.
 
 
 .. autodata:: ASSETS_ROOT
-    :noindex:
 
 .. autodata:: ASSETS_URL
-    :noindex:
 
 .. _django-setting-debug:
 
 .. autodata:: ASSETS_DEBUG
-    :noindex:
 
 .. autodata:: ASSETS_AUTO_BUILD
-    :noindex:
 
 .. autodata:: ASSETS_URL_EXPIRE
-    :noindex:
 
 .. autodata:: ASSETS_VERSIONS
-    :noindex:
 
 .. autodata:: ASSETS_MANIFEST
-    :noindex:
 
 .. autodata:: ASSETS_CACHE
-    :noindex:
 
 .. data:: ASSETS_JINJA2_EXTENSIONS
-    :noindex:
 
     This is needed in some cases when you want to use ``django-assets`` with
     the Jinja 2 template system. It should be a list of extensions you are
@@ -50,7 +43,6 @@ in your project's global settings.
 .. _django-setting-modules:
 
 .. data:: ASSETS_MODULES
-    :noindex:
 
     ``django-assets`` will automatically look for ``assets.py`` files in each
     application, where you can register your bundles. If you want additional

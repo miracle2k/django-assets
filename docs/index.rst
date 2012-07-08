@@ -1,10 +1,25 @@
-================================================
-``django-assets`` - webassets Django integration
-================================================
+:tocdepth: 3
+
+django-assets
+=============
+
+.. module:: django_assets
+
+.. toctree::
+    :maxdepth: 1
+
+    jinja2
+    settings
+
+django-assets helps you to integrate `webassets`_ into your `Django`_
+application.
+
+.. _webassets: http://github.com/miracle2k/webassets
+.. _Django: https://www.djangoproject.com/
 
 
-Quick Start
------------
+Quickstart
+----------
 
 First, add ``django_assets`` to your ``INSTALLED_APPS`` setting:
 
@@ -15,7 +30,8 @@ First, add ``django_assets`` to your ``INSTALLED_APPS`` setting:
         'django_assets',
     )
 
-Create an ``assets.py`` file inside your application directory. This
+
+Create an ``assets.py`` file inside your *application* directory. This
 is where you define your assets, and like Django's ``admin.py`` files,
 they will automatically be picked up:
 
@@ -26,8 +42,17 @@ they will automatically be picked up:
                 filters='jsmin', output='gen/packed.js')
     register('js_all', js)
 
+.. note::
 
-Then, include the bundle you defined in the appropriate place within your
+    Make sure your ``assets.py`` is inside a Django *application*, not in
+    the *project*. That is, the path might be something like
+    ``my_project/my_application/assets.py``.
+
+    If you want to define assets in a different place, you can use the
+    :data:`~django_assets.settings.ASSETS_URL` setting.
+
+
+Finally, include the bundle you defined in the appropriate place within your
 templates:
 
 .. code-block:: django
@@ -38,11 +63,11 @@ templates:
     {% endassets %}
 
 
-That's it, really. ``django-assets`` will automatically merge and compress
-your bundle's source files the first time the template is rendered, and will
-automatically update the compressed file everytime a source file changes.
-If :doc:`ASSETS_DEBUG <settings>` is enabled, then each source file
-will be outputted individually instead.
+``django-assets`` will now automatically merge and compress your bundle's
+source files the first time the template is rendered, and will
+automatically update the compressed file every time a source file changes.
+If :data:`~django_assets.settings.ASSETS_DEBUG` is enabled, then each source
+file will be outputted individually instead.
 
 
 Templates only
@@ -73,9 +98,6 @@ It can be used to manually cause your bundles to be rebuilt::
 Note that this is more difficult if you are defining your bundles within
 your templates, rather than in code. You then need to use the
 ``--parse-templates`` option, so the ``build`` command can find the bundles.
-
-More about the management commands which are available (in generic,
-non-Django specific form) can be found on the :doc:`../script` page.
 
 
 Staticfiles support
@@ -109,8 +131,8 @@ changes will currently not be picked up in production until you have run
 
 The new ``CachedStaticFileStorage`` in Django 1.4 is able to rename all files
 to include their content hash in the filename, and rewrite references within
-your code. This is somewhat overlapping with our own
-:doc:`versioning system </expiry>`.
+your code. This is somewhat overlapping with webassets' own
+:ref:`versioning system <webassets:expiry>`.
 
 If you prefer to use ``CachedStaticFileStorage``, you shouldn't run into any
 problems. Just make sure you run ``./manage.py assets build`` first, and
@@ -131,16 +153,21 @@ See :doc:`jinja2` if you want to use ``django-assets`` with the Jinja2
 templating language.
 
 
-Further Reading
----------------
+Settings
+~~~~~~~~~~~~
 
-.. toctree::
-    :maxdepth: 1
+See :doc:`settings` for on overview of Django configuration values.
 
-    settings
-    All about bundles <../bundles>
-    ../builtin_filters
-    ../custom_filters
-    ../css_compilers
-    jinja2
-    ../faq
+
+webassets documentation
+-----------------------
+
+For further information, have a look at the complete
+:ref:`webassets documentation <index>`, and in particular, the
+following topics:
+
+- :ref:`All about bundles <webassets:bundles>`
+- :ref:`Builtin filters <webassets:builtin-filters>`
+- :ref:`Custom filters <webassets:custom-filters>`
+- :ref:`CSS compilers <webassets:css-compilers>`
+- :ref:`FAQ <webassets:faq>`

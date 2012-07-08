@@ -11,13 +11,16 @@ from webassets import Environment
 
 class docwrap(object):
     def __init__(self, object, append=None):
-        self.__doc__ = object.__doc__
+        self.__doc__ = object.__doc__ if object else ''
         if append:
             # Add to the docstring, maintaining the proper indentation
             # so that the reST will be formatted correctly.
-            last_line = self.__doc__.splitlines()[-1]
-            indent = last_line[-len(last_line.lstrip()):]
-            append = "\n".join(map(lambda s: indent+s, append.splitlines()))
+            try:
+                last_line = self.__doc__.splitlines()[-1]
+                indent = last_line[-len(last_line.lstrip()):]
+                append = "\n".join(map(lambda s: indent+s, append.splitlines()))
+            except IndexError:
+                pass
             self.__doc__ += append
 
 
