@@ -14,5 +14,6 @@
 
 /LOCAL_TODO
 
+/.tox/
 *.~*
 *.pyc
