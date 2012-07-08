@@ -4,6 +4,8 @@
 /.settings
 # WingIDE
 /django-assets.wpr
+# PyCharm
+/.idea/
 
 # distutils
 /build
