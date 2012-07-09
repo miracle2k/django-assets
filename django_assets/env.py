@@ -1,6 +1,7 @@
 import imp
 from django.conf import settings
-from webassets.env import BaseEnvironment, ConfigStorage
+from webassets.env import (
+    BaseEnvironment, ConfigStorage, Resolver, url_prefix_join)
 from webassets.exceptions import ImminentDeprecationWarning
 try:
     from django.contrib.staticfiles import finders
@@ -71,12 +72,45 @@ class DjangoConfigStorage(ConfigStorage):
         self.__setitem__(key, None)
 
 
+class DjangoResolver(Resolver):
+    """Adds support for staticfiles resolving."""
+
+    @property
+    def use_staticfiles(self):
+        return settings.DEBUG and \
+            'django.contrib.staticfiles' in settings.INSTALLED_APPS
+
+    def search_for_source(self, item):
+        if not self.use_staticfiles:
+            return Resolver.search_for_source(self, item)
+
+        # Use the staticfiles finders to determine the absolute path
+        if finders:
+            f = finders.find(item)
+            if f is not None:
+                return f
+
+        raise IOError(
+            "'%s' not found (using staticfiles finders)" % item)
+
+    def resolve_source_to_url(self, filepath, item):
+        if not self.use_staticfiles:
+            return Resolver.resolve_source_to_url(self, filepath, item)
+
+        # With staticfiles enabled, searching the url mappings, as the
+        # parent implementation does, will not help. Instead, we can
+        # assume that the url is the root url + the original relative
+        # item that was specified (and searched for using the finders).
+        return url_prefix_join(self.env.url, item)
+
+
 class DjangoEnvironment(BaseEnvironment):
     """For Django, we need to redirect all the configuration values this
     object holds to Django's own settings object.
     """
 
     config_storage_class = DjangoConfigStorage
+    resolver_class = DjangoResolver
 
     def __init__(self, **config):
         super(DjangoEnvironment, self).__init__(**config)
@@ -87,21 +121,6 @@ class DjangoEnvironment(BaseEnvironment):
             self.config['expire'] = getattr(settings, 'ASSETS_EXPIRE')
         if 'updater' in self.config:
             self.config['updater'] = getattr(settings, 'ASSETS_UPDATER')
-
-    def _normalize_source_path(self, spath):
-        """In DEBUG mode, if the staticfiles app is enabled,
-        use its finders to access bundle source files.
-        """
-        if not settings.DEBUG or \
-           not 'django.contrib.staticfiles' in settings.INSTALLED_APPS:
-            return super(DjangoEnvironment, self)._normalize_source_path(spath)
-
-        if finders:
-            f = finders.find(spath)
-            if f is not None:
-                return f
-
-        raise IOError("'%s' not found (using staticfiles finders)" % spath)
 
 
 # Django has a global state, a global configuration, and so we need a

@@ -40,6 +40,7 @@ class TempEnvironmentHelper(BaseTempEnvironmentHelper):
 
         # Use a temporary directory as MEDIA_ROOT
         settings.MEDIA_ROOT = self.create_directories('media')[0]
+        settings.STATIC_ROOT = None
 
         # Some other settings without which we are likely to run
         # into errors being raised as part of validation.
@@ -93,19 +94,19 @@ class TestConfig(object):
         settings.STATIC_ROOT = 'FOO_STATIC'
         settings.MEDIA_ROOT = 'FOO_MEDIA'
         # Pointing to ASSETS_ROOT
-        assert get_env().directory == 'FOO_ASSETS'
+        assert get_env().directory.endswith('FOO_ASSETS')
         get_env().directory = 'BAR'
         assert settings.ASSETS_ROOT == 'BAR'
         # Pointing to STATIC_ROOT
         delsetting('ASSETS_ROOT')
-        assert get_env().directory == 'FOO_STATIC'
+        assert get_env().directory.endswith('FOO_STATIC')
         get_env().directory = 'BAR'
         assert settings.STATIC_ROOT == 'BAR'
         # Pointing to MEDIA_ROOT; Note we only
         # set STATIC_ROOT to None rather than deleting
         # it, a scenario that may occur in the wild.
         settings.STATIC_ROOT = None
-        assert get_env().directory == 'FOO_MEDIA'
+        assert get_env().directory.endswith('FOO_MEDIA')
         get_env().directory = 'BAR'
         assert settings.MEDIA_ROOT == 'BAR'
 
@@ -249,12 +250,12 @@ class TestStaticFiles(TempEnvironmentHelper):
     """
 
     def setup(self):
-        TempEnvironmentHelper.setup(self)
-
         try:
             import django.contrib.staticfiles
         except ImportError:
             raise SkipTest()
+
+        TempEnvironmentHelper.setup(self)
 
         # Configure a staticfiles-using project.
         settings.STATIC_ROOT = settings.MEDIA_ROOT   # /media via baseclass
