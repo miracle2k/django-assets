@@ -293,6 +293,17 @@ class TestStaticFiles(TempEnvironmentHelper):
         bundle.build()
         assert self.get("media/out") == "foo\nbar"
 
+    def test_find_with_glob(self):
+        """Globs can be used across staticdirs."""
+        self.mkbundle('file?', output="out").build()
+        assert self.get("media/out") == "foo\nbar"
+
+    def test_find_with_recursive_glob(self):
+        """Recursive globs."""
+        self.create_files({'foo/subdir/foundit.js': '42'})
+        self.mkbundle('**/*.js', output="out").build()
+        assert self.get("media/out") == "42"
+
     def test_missing_file(self):
         """An error is raised if a source file is missing.
         """

@@ -9,6 +9,8 @@ except ImportError:
     # Support pre-1.3 versions.
     finders = None
 
+from glob import Globber, has_magic
+
 
 __all__ = ('register',)
 
@@ -72,6 +74,35 @@ class DjangoConfigStorage(ConfigStorage):
         self.__setitem__(key, None)
 
 
+class StorageGlobber(Globber):
+    """Globber that works with a Django storage."""
+
+    def __init__(self, storage):
+        self.storage = storage
+
+    def isdir(self, path):
+        # No API for this, though we could a) check if this is a filesystem
+        # storage, then do a shortcut, otherwise b) use listdir() and see
+        # if we are in the directory set.
+        # However, this is only used for the "sdf/" syntax, so by returning
+        # False we disable this syntax and cause it no match nothing.
+        return False
+
+    def islink(self, path):
+        # No API for this, just act like we don't know about links.
+        return False
+
+    def listdir(self, path):
+        directories, files = self.storage.listdir(path)
+        return directories + files
+
+    def exists(self, path):
+        try:
+            return self.storage.exists(path)
+        except NotImplementedError:
+            return False
+
+
 class DjangoResolver(Resolver):
     """Adds support for staticfiles resolving."""
 
@@ -80,15 +111,38 @@ class DjangoResolver(Resolver):
         return settings.DEBUG and \
             'django.contrib.staticfiles' in settings.INSTALLED_APPS
 
+    def glob_staticfiles(self, item):
+        # The staticfiles finder system can't do globs, but we can
+        # access the storages behind the finders, and glob those.
+
+        # Use the staticfiles finders to determine the absolute path
+        for finder in finders.get_finders():
+            # Builtin finders use either one of those attributes,
+            # though this does seem to be informal; custom finders
+            # may well use neither. Nothing we can do about that.
+            if hasattr(finder, 'storages'):
+                storages = finder.storages.values()
+            elif hasattr(finder, 'storage'):
+                storages = [finder.storage]
+            else:
+                continue
+
+            for storage in storages:
+                globber = StorageGlobber(storage)
+                for file in globber.glob(item):
+                    yield storage.path(file)
+
     def search_for_source(self, item):
         if not self.use_staticfiles:
             return Resolver.search_for_source(self, item)
 
-        # Use the staticfiles finders to determine the absolute path
         if finders:
-            f = finders.find(item)
-            if f is not None:
-                return f
+            if has_magic(item):
+                return list(self.glob_staticfiles(item))
+            else:
+                f = finders.find(item)
+                if f is not None:
+                    return f
 
         raise IOError(
             "'%s' not found (using staticfiles finders)" % item)

@@ -30,6 +30,7 @@ class AssetsFinder(staticfiles.finders.BaseStorageFinder):
     merged assets are written.
     """
 
+    # Make this finder search ``Environment.directory``.
     storage = AssetsFileStorage
 
     def list(self, ignore_patterns):
