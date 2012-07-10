@@ -115,7 +115,6 @@ class DjangoResolver(Resolver):
         # The staticfiles finder system can't do globs, but we can
         # access the storages behind the finders, and glob those.
 
-        # Use the staticfiles finders to determine the absolute path
         for finder in finders.get_finders():
             # Builtin finders use either one of those attributes,
             # though this does seem to be informal; custom finders
@@ -136,6 +135,7 @@ class DjangoResolver(Resolver):
         if not self.use_staticfiles:
             return Resolver.search_for_source(self, item)
 
+        # Use the staticfiles finders to determine the absolute path
         if finders:
             if has_magic(item):
                 return list(self.glob_staticfiles(item))
