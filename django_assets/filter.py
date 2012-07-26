@@ -15,6 +15,7 @@ class TemplateFilter(Filter):
     """
 
     name = 'template'
+    max_debug_level = None
 
     def __init__(self, context=None):
         super(TemplateFilter, self).__init__()
