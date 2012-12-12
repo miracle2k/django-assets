@@ -1,0 +1,6 @@
+0.8 (2012-11-23)
+    Based on 0.7-state from webassets core repository.
+
+    - Staticfiles integration now allows for globbing.
+    - Better document staticfiles support.
+    - Fix encoding errors raised by the template filter (Nikolai Prokoschenko).
