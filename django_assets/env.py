@@ -26,6 +26,8 @@ class DjangoConfigStorage(ConfigStorage):
         'url_expire': 'ASSETS_URL_EXPIRE',
         'versions': 'ASSETS_VERSIONS',
         'manifest': 'ASSETS_MANIFEST',
+        'load_path': 'ASSETS_LOAD_PATH',
+        'url_mapping': 'ASSETS_URL_MAPPING',
         # Deprecated
         'expire': 'ASSETS_EXPIRE',
     }
@@ -62,7 +64,8 @@ class DjangoConfigStorage(ConfigStorage):
                 return value
             return getattr(settings, self._transform_key(key))
         else:
-            raise KeyError("Django settings doesn't define %s" % key)
+            raise KeyError("Django settings doesn't define %s" %
+                           self._transform_key(key))
 
     def __setitem__(self, key, value):
         if not self._set_deprecated(key, value):
