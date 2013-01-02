@@ -55,6 +55,13 @@ Specific steps to make ``django-assets`` work with staticfiles
 0. Make sure ``django.contrib.staticfiles`` is listed in ``INSTALLED_APPS``.
 
 1. Add ``django_assets.finders.AssetsFinder`` to your ``STATICFILES_FINDERS``.
+   It mighgt then look like this::
+
+       STATICFILES_FINDERS = (
+          "django.contrib.staticfiles.finders.FileSystemFinder",
+          "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+          "django_assets.finders.AssetsFinder"
+       )
 
    This is necessary so that output files written to ``STATIC_ROOT`` are
    served in debug mode by the ``staticfiles`` *serve view*, which is not
