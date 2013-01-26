@@ -158,6 +158,12 @@ class DjangoResolver(Resolver):
         # parent implementation does, will not help. Instead, we can
         # assume that the url is the root url + the original relative
         # item that was specified (and searched for using the finders).
+        # The only exception is when the relative url contains a wildcard.
+        # In that case we need to extract from the filepath the right part
+        # of the path and then join it with the root url.
+        if '*' in item:
+            path, _ = item.rsplit('*', 1)
+            item = '%s%s' % (path, filepath.rsplit(path, 1)[1])
         return url_prefix_join(self.env.url, item)
 
 
