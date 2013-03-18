@@ -55,7 +55,7 @@ Specific steps to make ``django-assets`` work with staticfiles
 0. Make sure ``django.contrib.staticfiles`` is listed in ``INSTALLED_APPS``.
 
 1. Add ``django_assets.finders.AssetsFinder`` to your ``STATICFILES_FINDERS``.
-   It mighgt then look like this::
+   It might then look like this::
 
        STATICFILES_FINDERS = (
           "django.contrib.staticfiles.finders.FileSystemFinder",
