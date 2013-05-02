@@ -78,7 +78,7 @@ Specific steps to make ``django-assets`` work with staticfiles
 
 The new ``CachedStaticFileStorage`` in Django 1.4 is able to rename all
 files to include their content hash in the filename, and rewrite references
-to them within other statc files.. This is somewhat overlapping with
+to them within other static files.. This is somewhat overlapping with
 webassets' own :ref:`versioning system <webassets:expiry>`.
 
 If you prefer to use ``CachedStaticFileStorage``, you shouldn't run into
