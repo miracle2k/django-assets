@@ -246,7 +246,7 @@ class TestStaticFiles(TempEnvironmentHelper):
         settings.STATICFILES_DIRS = tuple(self.create_directories('foo', 'bar'))
         settings.STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
         self.create_files({'foo/file1': 'foo', 'bar/file2': 'bar'})
-        settings.DEBUG = True
+        settings.ASSETS_DEBUG = True
 
         # Reset the finders cache after each run, since our
         # STATICFILES_DIRS change every time.
@@ -262,7 +262,7 @@ class TestStaticFiles(TempEnvironmentHelper):
     def test_build_nodebug(self):
         """If debug is disabled, the finders are not used.
         """
-        settings.DEBUG = False
+        settings.ASSETS_DEBUG = False
         bundle = self.mkbundle('file1', 'file2', output="out")
         assert_raises(BundleError, bundle.build)
 
