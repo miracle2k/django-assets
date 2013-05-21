@@ -23,7 +23,7 @@ class TemplateFilter(Filter):
 
     def input(self, _in, out, source_path, output_path, **kw):
         t = Template(_in.read(), origin='django-assets', name=source_path)
-        out.write(t.render(Context(self.context if self.context else {}) ).encode('utf-8'))
+        out.write(t.render(Context(self.context if self.context else {}) ))
 
 
 register_filter(TemplateFilter)
