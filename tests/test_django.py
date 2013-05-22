@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import with_statement
 
 from nose import SkipTest
@@ -340,7 +341,7 @@ class TestStaticFiles(TempEnvironmentHelper):
 class TestFilter(TempEnvironmentHelper):
 
     def test_template(self):
-        self.create_files({'media/foo.html': '{{ num|filesizeformat }}'})
+        self.create_files({'media/foo.html': 'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
-        assert self.get('media/out') == '22.2 MB'
+        assert self.get('media/out') == 'Ünicôdé-Chèck: 22.2 MB'
