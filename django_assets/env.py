@@ -1,4 +1,5 @@
 import imp
+import threading
 from django.conf import settings
 from webassets.env import (
     BaseEnvironment, ConfigStorage, Resolver, url_prefix_join)
@@ -183,19 +184,23 @@ class DjangoEnvironment(BaseEnvironment):
 # Django has a global state, a global configuration, and so we need a
 # global instance of a asset environment.
 env = None
+env_lock = threading.Lock()
 
 def get_env():
-    global env
-    if env is None:
-        env = DjangoEnvironment()
+    # While the first request is within autoload(), a second thread can come
+    # in and without the lock, would use a not-fully-loaded environment.
+    with env_lock:
+        global env
+        if env is None:
+            env = DjangoEnvironment()
 
-        # Load application's ``assets``  modules. We need to do this in
-        # a delayed fashion, since the main django_assets module imports
-        # this, and the application ``assets`` modules we load will import
-        # ``django_assets``, thus giving us a classic circular dependency
-        # issue.
-        autoload()
-    return env
+            # Load application's ``assets``  modules. We need to do this in
+            # a delayed fashion, since the main django_assets module imports
+            # this, and the application ``assets`` modules we load will import
+            # ``django_assets``, thus giving us a classic circular dependency
+            # issue.
+            autoload()
+        return env
 
 def reset():
     global env
@@ -228,9 +233,6 @@ def autoload():
     process works. This is were this code has been adapted from, too.
 
     Only runs once.
-
-    TOOD: Not thread-safe!
-    TODO: Bring back to status output via callbacks?
     """
     global _ASSETS_LOADED
     if _ASSETS_LOADED:
