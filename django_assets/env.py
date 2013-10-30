@@ -184,7 +184,7 @@ class DjangoEnvironment(BaseEnvironment):
 # Django has a global state, a global configuration, and so we need a
 # global instance of a asset environment.
 env = None
-env_lock = threading.Lock()
+env_lock = threading.RLock()
 
 def get_env():
     # While the first request is within autoload(), a second thread can come
