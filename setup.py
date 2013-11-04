@@ -44,9 +44,6 @@ setup(
         'Django>=1.1',
         'webassets==%s' % webassets_version,
         ],
-    dependency_links=[
-            'https://github.com/rassie/webassets/archive/master.zip#egg=webassets-0.9.dev'
-        ],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
