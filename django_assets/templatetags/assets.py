@@ -24,12 +24,13 @@ class AssetsNode(template.Node):
     # For testing, to inject a mock bundle
     BundleClass = Bundle
 
-    def __init__(self, filters, output, debug, files, childnodes):
+    def __init__(self, filters, output, debug, files, childnodes, need_content):
         self.childnodes = childnodes
         self.output = output
         self.files = files
         self.filters = filters
         self.debug = debug
+        self.need_content = need_content
 
     def resolve(self, context={}):
         """We allow variables to be used for all arguments; this function
@@ -64,7 +65,11 @@ class AssetsNode(template.Node):
 
     def render(self, context):
         bundle = self.resolve(context)
-
+        if self.need_content:
+            content = ''
+            for filehunk in bundle.build(env=get_env()):
+                content = content + filehunk.data()
+            context.update({'ASSET_CONTENT': content})
         result = u""
         for url in bundle.urls(env=get_env()):
             context.update({'ASSET_URL': url, 'EXTRA': bundle.extra})
@@ -119,10 +124,12 @@ def assets(parser, token):
         else:
             raise template.TemplateSyntaxError('Unsupported keyword argument "%s"'%name)
 
+    need_content = len([True for t in parser.tokens if 'ASSET_CONTENT' in t.contents]) > 0
+
     # capture until closing tag
     childnodes = parser.parse(("endassets",))
     parser.delete_first_token()
-    return AssetsNode(filters, output, debug, files, childnodes)
+    return AssetsNode(filters, output, debug, files, childnodes, need_content)
 
 
 
