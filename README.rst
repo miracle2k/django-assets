@@ -4,7 +4,7 @@ merging, minifying and compiling CSS and Javascript files.
 Documentation of latest stable version:
     http://elsdoerfer.name/docs/django-assets/
 
-Docunentation of development version:
+Documentation of development version:
     http://django-assets.readthedocs.org/
 
 .. _webassets: http://github.com/miracle2k/webassets
