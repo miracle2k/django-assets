@@ -44,7 +44,7 @@ class AssetsNode(template.Node):
             else:
                 try:
                     return template.Variable(x).resolve(context)
-                except template.VariableDoesNotExist, e:
+                except template.VariableDoesNotExist:
                     # Django seems to hide those; we don't want to expose
                     # them either, I guess.
                     raise

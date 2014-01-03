@@ -5,7 +5,7 @@ from webassets.env import (
     BaseEnvironment, ConfigStorage, Resolver, url_prefix_join)
 from webassets.exceptions import ImminentDeprecationWarning
 
-from glob import Globber, has_magic
+from django_assets.glob import Globber, has_magic
 
 
 __all__ = ('register',)
