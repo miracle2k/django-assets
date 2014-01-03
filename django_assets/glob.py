@@ -146,7 +146,7 @@ class Globber(object):
         """
         try:
             names = self.listdir(top)
-        except os.error, err:
+        except os.error:
             return
 
         items = []
