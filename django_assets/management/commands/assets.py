@@ -86,7 +86,7 @@ class Command(BaseCommand):
             env=get_env(), log=log, no_global_options=True, prog=prog)
         try:
             impl.run_with_argv(args)
-        except AssetCommandError, e:
+        except AssetCommandError as e:
             raise CommandError(e)
 
     def load_from_templates(self):
