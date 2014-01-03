@@ -85,7 +85,7 @@ class DjangoLoader(GlobLoader):
         # parse the template for asset nodes
         try:
             t = template.Template(contents)
-        except template.TemplateSyntaxError, e:
+        except template.TemplateSyntaxError as e:
             raise LoaderError('Django parser failed: %s' % e)
         else:
             result = []
