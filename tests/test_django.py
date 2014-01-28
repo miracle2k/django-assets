@@ -341,7 +341,7 @@ class TestStaticFiles(TempEnvironmentHelper):
 class TestFilter(TempEnvironmentHelper):
 
     def test_template(self):
-        self.create_files({'media/foo.html': 'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
+        self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
         assert self.get('media/out') == 'Ünicôdé-Chèck: 22.2 MB'
