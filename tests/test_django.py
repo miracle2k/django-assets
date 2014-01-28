@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import with_statement
 
 from nose import SkipTest
@@ -5,6 +6,7 @@ from nose.tools import assert_raises
 
 from django.conf import settings
 from django.template import Template, Context
+from django.utils.encoding import smart_text
 from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
 from django_assets.env import get_env, reset as django_env_reset
@@ -265,7 +267,7 @@ class TestStaticFiles(TempEnvironmentHelper):
         settings.STATICFILES_DIRS = tuple(self.create_directories('foo', 'bar'))
         settings.STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
         self.create_files({'foo/file1': 'foo', 'bar/file2': 'bar'})
-        settings.DEBUG = True
+        settings.ASSETS_DEBUG = True
 
         # Reset the finders cache after each run, since our
         # STATICFILES_DIRS change every time.
@@ -281,7 +283,7 @@ class TestStaticFiles(TempEnvironmentHelper):
     def test_build_nodebug(self):
         """If debug is disabled, the finders are not used.
         """
-        settings.DEBUG = False
+        settings.ASSETS_DEBUG = False
         bundle = self.mkbundle('file1', 'file2', output="out")
         assert_raises(BundleError, bundle.build)
 
@@ -340,7 +342,7 @@ class TestStaticFiles(TempEnvironmentHelper):
 class TestFilter(TempEnvironmentHelper):
 
     def test_template(self):
-        self.create_files({'media/foo.html': '{{ num|filesizeformat }}'})
+        self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
-        assert self.get('media/out') == '22.2 MB'
+        assert smart_text(self.get('media/out')) == u'Ünicôdé-Chèck: 22.2\xa0MB'

@@ -4,6 +4,8 @@
 from __future__ import with_statement
 from setuptools import setup, find_packages
 
+import multiprocessing
+
 # Figure out the version; this could be done by importing the
 # module, though that requires dependencies to be already installed,
 # which may not be the case when processing a pip requirements
@@ -40,7 +42,7 @@ setup(
     platforms='any',
     install_requires=[
         'Django>=1.1',
-        'webassets==%s' % webassets_version,
+        'webassets>=%s' % webassets_version,
         ],
     classifiers=[
         'Environment :: Web Environment',
