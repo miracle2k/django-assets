@@ -11,7 +11,7 @@ Jinja. For example, filters may be specified as tuples:
 
 .. code-block:: django
 
-    {% assets filters=("jsmin", "gzip") ... %}
+    {% assets filters=("coffeescript", "jsmin") ... %}
 
 
 More exhaustive documentation of the Jinja2 tag can be

@@ -10,6 +10,8 @@ from webassets.exceptions import ImminentDeprecationWarning
 def parse_debug_value(value):
     """Django templates do not know what a boolean is, and anyway we need to
     support the 'merge' option."""
+    if isinstance(value, bool):
+        return value
     try:
         from webassets.env import parse_debug_value
         return parse_debug_value(value)
@@ -44,7 +46,7 @@ class AssetsNode(template.Node):
             else:
                 try:
                     return template.Variable(x).resolve(context)
-                except template.VariableDoesNotExist, e:
+                except template.VariableDoesNotExist:
                     # Django seems to hide those; we don't want to expose
                     # them either, I guess.
                     raise
