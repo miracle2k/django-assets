@@ -85,7 +85,13 @@ class Command(BaseCommand):
         impl = GenericArgparseImplementation(
             env=get_env(), log=log, no_global_options=True, prog=prog)
         try:
-            impl.run_with_argv(args)
+            # The webassets script runner may either return None on success (so
+            # map that to zero) or a return code on build failure (so raise
+            # a Django CommandError exception when that happens)
+            retval = impl.run_with_argv(args) or 0
+            if retval != 0:
+                raise CommandError('The webassets build script exited with '
+                                   'a non-zero exit code (%d).' % retval)
         except AssetCommandError as e:
             raise CommandError(e)
 
