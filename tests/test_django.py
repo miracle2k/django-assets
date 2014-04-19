@@ -116,27 +116,6 @@ class TestConfig(object):
         # Also, we are caseless.
         assert get_env().config['foO'] == 42
 
-    def test_deprecated_options(self):
-        try:
-            django_env_reset()
-            with check_warnings(("", ImminentDeprecationWarning)) as w:
-                settings.ASSETS_EXPIRE = 'filename'
-                assert_raises(DeprecationWarning, get_env)
-
-            django_env_reset()
-            with check_warnings(("", ImminentDeprecationWarning)) as w:
-                settings.ASSETS_EXPIRE = 'querystring'
-                assert get_env().url_expire == True
-
-            with check_warnings(("", ImminentDeprecationWarning)) as w:
-                django_env_reset()
-                settings.ASSETS_UPDATER = 'never'
-                assert get_env().auto_build == False
-        finally:
-            delsetting('ASSETS_EXPIRE')
-            delsetting('ASSETS_UPDATER')
-
-
 class TestTemplateTag():
 
     def setup(self):

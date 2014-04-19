@@ -29,8 +29,6 @@ class DjangoConfigStorage(ConfigStorage):
         'manifest': 'ASSETS_MANIFEST',
         'load_path': 'ASSETS_LOAD_PATH',
         'url_mapping': 'ASSETS_URL_MAPPING',
-        # Deprecated
-        'expire': 'ASSETS_EXPIRE',
     }
 
     def _transform_key(self, key):
@@ -169,16 +167,6 @@ class DjangoEnvironment(BaseEnvironment):
 
     config_storage_class = DjangoConfigStorage
     resolver_class = DjangoResolver
-
-    def __init__(self, **config):
-        super(DjangoEnvironment, self).__init__(**config)
-
-        # This is pretty stupid, but fortunately will be removed with
-        # the deprecated option. This triggers the deprecation warnings.
-        if 'expire' in self.config:
-            self.config['expire'] = getattr(settings, 'ASSETS_EXPIRE')
-        if 'updater' in self.config:
-            self.config['updater'] = getattr(settings, 'ASSETS_UPDATER')
 
 
 # Django has a global state, a global configuration, and so we need a
