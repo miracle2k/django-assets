@@ -135,9 +135,9 @@ class DjangoResolver(Resolver):
                 for file in globber.glob(item):
                     yield storage.path(file)
 
-    def search_for_source(self, item):
+    def search_for_source(self, ctx, item):
         if not self.use_staticfiles:
-            return Resolver.search_for_source(self, item)
+            return Resolver.search_for_source(self, ctx, item)
 
         # Use the staticfiles finders to determine the absolute path
         if finders:
@@ -151,15 +151,15 @@ class DjangoResolver(Resolver):
         raise IOError(
             "'%s' not found (using staticfiles finders)" % item)
 
-    def resolve_source_to_url(self, filepath, item):
+    def resolve_source_to_url(self, ctx, filepath, item):
         if not self.use_staticfiles:
-            return Resolver.resolve_source_to_url(self, filepath, item)
+            return Resolver.resolve_source_to_url(self, ctx, filepath, item)
 
         # With staticfiles enabled, searching the url mappings, as the
         # parent implementation does, will not help. Instead, we can
         # assume that the url is the root url + the original relative
         # item that was specified (and searched for using the finders).
-        return url_prefix_join(self.env.url, item)
+        return url_prefix_join(ctx.url, item)
 
 
 class DjangoEnvironment(BaseEnvironment):
