@@ -56,4 +56,10 @@ setup(
     tests_require=[
         'nose',
     ],
+    # make plugin available to pytest
+    entry_points = {
+        'pytest11': [
+            'name_of_plugin = django_assets.pytest_plugin',
+        ]
+    },
 )
