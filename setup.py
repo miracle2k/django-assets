@@ -11,8 +11,7 @@ from setuptools import setup, find_packages
 def parse_version(asignee):
     import os, re
     here = os.path.dirname(os.path.abspath(__file__))
-    version_re = re.compile(
-        r'__version__ = (\(.*?\))')
+    version_re = re.compile(r'%s = (\(.*?\))' % asignee)
     with open(os.path.join(here, 'django_assets', '__init__.py')) as fp:
         for line in fp:
             match = version_re.search(line)
