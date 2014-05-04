@@ -3,17 +3,16 @@
 For those to be registered automatically, make sure the main
 django_assets namespace imports this file.
 """
-
 from django.template import Template, Context
 
+from webassets import six
 from webassets.filter import Filter, register_filter
 
 
-
 class TemplateFilter(Filter):
-    """Will compile all source files as Django templates.
     """
-
+    Will compile all source files as Django templates.
+    """
     name = 'template'
     max_debug_level = None
 
@@ -23,7 +22,11 @@ class TemplateFilter(Filter):
 
     def input(self, _in, out, source_path, output_path, **kw):
         t = Template(_in.read(), origin='django-assets', name=source_path)
-        out.write(t.render(Context(self.context if self.context else {}) ).encode('utf-8'))
+        rendered = t.render(Context(self.context if self.context else {}))
+
+        if not six.PY3:
+            rendered = rendered.encode('utf-8')
+        out.write(rendered)
 
 
 register_filter(TemplateFilter)
