@@ -1,5 +1,6 @@
 import tokenize
 import warnings
+import functools
 
 from django import template
 from django_assets import Bundle
@@ -26,7 +27,7 @@ class AssetsNode(template.Node):
     # For testing, to inject a mock bundle
     BundleClass = Bundle
 
-    def __init__(self, filters, output, debug, files, childnodes):
+    def __init__(self, filters, output, debug, files, childnodes=None):
         self.childnodes = childnodes
         self.output = output
         self.files = files
@@ -77,7 +78,22 @@ class AssetsNode(template.Node):
         return result
 
 
-def assets(parser, token):
+class JsCssAssetsNode(AssetsNode):
+
+    def render(self, context):
+        bundle = self.resolve(context)
+        result = u""
+        for url in bundle.urls(env=get_env()):
+            result += self.template.format(ASSET_URL=url)
+        return result
+
+class JsAssetsNode(JsCssAssetsNode):
+    template = '<script type="text/javascript" src="{ASSET_URL}"></script>'
+
+class CssAssetsNode(JsCssAssetsNode):
+    template = '<link rel="stylesheet" type="text/css" href="{ASSET_URL}" media="all" />'
+
+def assets(parser, token, type=""):
     filters = None
     output = None
     debug = None
@@ -121,10 +137,15 @@ def assets(parser, token):
         else:
             raise template.TemplateSyntaxError('Unsupported keyword argument "%s"'%name)
 
-    # capture until closing tag
-    childnodes = parser.parse(("endassets",))
-    parser.delete_first_token()
-    return AssetsNode(filters, output, debug, files, childnodes)
+    if type == "":
+        # capture until closing tag
+        childnodes = parser.parse(("endassets" + type,))
+        parser.delete_first_token()
+        return AssetsNode(filters, output, debug, files, childnodes)
+    elif type == "js":
+        return JsAssetsNode(filters, output, debug, files)
+    elif type == "css":
+        return CssAssetsNode(filters, output, debug, files)
 
 
 
@@ -141,3 +162,5 @@ else:
 
 # expose the default Django tag
 register.tag('assets', assets)
+register.tag('assetsjs', functools.partial(assets, type='js'))
+register.tag('assetscss', functools.partial(assets, type='css'))
