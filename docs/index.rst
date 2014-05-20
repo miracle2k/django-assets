@@ -49,7 +49,7 @@ they will automatically be picked up:
     ``my_project/my_application/assets.py``.
 
     If you want to define assets in a different place, you can use the
-    :data:`~django_assets.settings.ASSETS_URL` setting.
+    :data:`~django_assets.settings.ASSETS_MODULES` setting.
 
 
 Finally, include the bundle you defined in the appropriate place within your
