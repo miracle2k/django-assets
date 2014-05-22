@@ -14,8 +14,9 @@ except ImportError:
     # Since Django #12295, custom templatetags are no longer mapped into
     # the Django namespace. Support both versions.
     AssetsNodeMapped = None
-AssetsNodeClasses = filter(lambda c: bool(c),
-    (AssetsNodeOriginal, AssetsNodeMapped))
+AssetsNodeClasses = tuple(
+    filter(lambda c: bool(c), (AssetsNodeOriginal, AssetsNodeMapped))
+)
 
 
 __all__ = ('DjangoLoader', 'get_django_template_dirs',)

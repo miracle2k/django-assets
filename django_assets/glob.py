@@ -16,6 +16,7 @@ corresponding to PATTERN.  (It does not compile it.)
 """
 
 import re
+from webassets import six
 
 __all__ = ["filter", "fnmatch", "fnmatchcase", "translate"]
 
@@ -234,8 +235,8 @@ class Globber(object):
         and faster to filter here than in :meth:`_iglob`.
         """
 
-        if isinstance(pattern, unicode) and not isinstance(dirname, unicode):
-            dirname = unicode(dirname, sys.getfilesystemencoding() or
+        if isinstance(pattern, six.text_type) and not isinstance(dirname, six.text_type):
+            dirname = six.u(dirname, sys.getfilesystemencoding() or
                                        sys.getdefaultencoding())
 
         # If no magic, short-circuit, only check for existence
