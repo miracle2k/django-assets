@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import with_statement
 
 from nose import SkipTest
@@ -7,7 +8,8 @@ from django.conf import settings
 from django.template import Template, Context
 from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
-from django_assets.env import get_env, reset as django_env_reset
+from django_assets.env import get_env
+from django_assets.env import reset as django_env_reset
 from tests.helpers import (
     TempDirHelper,
     TempEnvironmentHelper as BaseTempEnvironmentHelper, assert_raises_regexp)

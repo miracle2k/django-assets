@@ -35,12 +35,12 @@ setup(
     description='Asset management for Django, to compress and merge '\
                 'CSS and Javascript files.',
     long_description=__doc__,
-    packages = find_packages(),
+    packages=find_packages(),
     zip_safe=False,
     platforms='any',
     install_requires=[
         'Django>=1.1',
-        'webassets==%s' % webassets_version,
+        'webassets==%s' % webassets_version
         ],
     classifiers=[
         'Environment :: Web Environment',
