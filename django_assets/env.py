@@ -110,7 +110,7 @@ class DjangoResolver(Resolver):
 
     @property
     def use_staticfiles(self):
-        return settings.DEBUG and \
+        return getattr(settings,'ASSETS_DEBUG',settings.DEBUG) and \
             'django.contrib.staticfiles' in settings.INSTALLED_APPS
 
     def glob_staticfiles(self, item):
