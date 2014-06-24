@@ -1,3 +1,4 @@
+import os, sys
 from django.conf import settings
 from django import template
 from webassets.loaders import GlobLoader, LoaderError
