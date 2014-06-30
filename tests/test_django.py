@@ -118,6 +118,7 @@ class TestConfig(object):
         # Also, we are caseless.
         assert get_env().config['foO'] == 42
 
+
 class TestTemplateTag():
 
     def setup(self):
@@ -126,11 +127,10 @@ class TestTemplateTag():
             urls_to_fake = ['foo']
             def __init__(self, *a, **kw):
                 Bundle.__init__(self, *a, **kw)
-                self.env = get_env()
                 # Kind of hacky, but gives us access to the last Bundle
                 # instance used by our Django template tag.
                 test_instance.the_bundle = self
-            def urls(self, *a, **kw):
+            def _urls(self, *a, **kw):
                 return self.urls_to_fake
         # Inject our mock bundle class
         self._old_bundle_class = AssetsNode.BundleClass
