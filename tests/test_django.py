@@ -6,7 +6,6 @@ from nose.tools import assert_raises
 
 from django.conf import settings
 from django.template import Template, Context
-from django.utils.encoding import smart_text
 from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
 from django_assets.env import get_env
@@ -325,4 +324,5 @@ class TestFilter(TempEnvironmentHelper):
         self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
-        assert smart_text(self.get('media/out')) == u'Ünicôdé-Chèck: 22.2\xa0MB'
+        # Depending on Django version "filesizeformat" may contain a breaking space
+        assert self.get('media/out') in ('Ünicôdé-Chèck: 22.2\xa0MB', 'Ünicôdé-Chèck: 22.2 MB')
