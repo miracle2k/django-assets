@@ -4,11 +4,6 @@ from django.conf import settings
 from webassets.env import (
     BaseEnvironment, ConfigStorage, Resolver, url_prefix_join)
 from webassets.exceptions import ImminentDeprecationWarning
-try:
-    from django.contrib.staticfiles import finders
-except ImportError:
-    # Support pre-1.3 versions.
-    finders = None
 
 from django_assets.glob import Globber, has_magic
 
@@ -117,6 +112,13 @@ class DjangoResolver(Resolver):
         # The staticfiles finder system can't do globs, but we can
         # access the storages behind the finders, and glob those.
 
+        # We can't import too early because of unit tests
+        try:
+            from django.contrib.staticfiles import finders
+        except ImportError:
+            # Support pre-1.3 versions.
+            finders = None
+
         for finder in finders.get_finders():
             # Builtin finders use either one of those attributes,
             # though this does seem to be informal; custom finders
@@ -137,6 +139,13 @@ class DjangoResolver(Resolver):
         if not self.use_staticfiles:
             return Resolver.search_for_source(self, ctx, item)
 
+        # We can't import too early because of unit tests
+        try:
+            from django.contrib.staticfiles import finders
+        except ImportError:
+            # Support pre-1.3 versions.
+            finders = None
+    
         # Use the staticfiles finders to determine the absolute path
         if finders:
             if has_magic(item):
