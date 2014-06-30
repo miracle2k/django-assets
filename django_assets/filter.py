@@ -23,9 +23,6 @@ class TemplateFilter(Filter):
     def input(self, _in, out, source_path, output_path, **kw):
         t = Template(_in.read(), origin='django-assets', name=source_path)
         rendered = t.render(Context(self.context if self.context else {}))
-
-        if not six.PY3:
-            rendered = rendered.encode('utf-8')
         out.write(rendered)
 
 
