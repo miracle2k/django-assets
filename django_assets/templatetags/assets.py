@@ -68,12 +68,13 @@ class AssetsNode(template.Node):
         bundle = self.resolve(context)
 
         result = u""
-        for url in bundle.urls(env=get_env()):
-            context.update({'ASSET_URL': url, 'EXTRA': bundle.extra})
-            try:
-                result += self.childnodes.render(context)
-            finally:
-                context.pop()
+        with bundle.bind(get_env()):
+            for url in bundle.urls():
+                context.update({'ASSET_URL': url, 'EXTRA': bundle.extra})
+                try:
+                    result += self.childnodes.render(context)
+                finally:
+                    context.pop()
         return result
 
 
