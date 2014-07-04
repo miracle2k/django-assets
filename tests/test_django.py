@@ -325,4 +325,4 @@ class TestFilter(TempEnvironmentHelper):
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
         # Depending on Django version "filesizeformat" may contain a breaking space
-        assert self.get('media/out') in ('Ünicôdé-Chèck: 22.2\xa0MB', 'Ünicôdé-Chèck: 22.2 MB')
+        assert self.get('media/out') in (u'Ünicôdé-Chèck: 22.2\xa0MB', u'Ünicôdé-Chèck: 22.2 MB')
