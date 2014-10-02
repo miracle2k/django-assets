@@ -76,10 +76,11 @@ class Command(BaseCommand):
                             if not b.is_container])
 
         if len(get_env()) == 0:
-            raise CommandError('No asset bundles were found. '
-                'If you are defining assets directly within your '
-                'templates, you want to use the --parse-templates '
-                'option.')
+            log.info("No asset bundles were found. "
+                "If you are defining assets directly within your "
+                "templates, you want to use the --parse-templates "
+                "option.")
+            return
 
         prog = "%s assets" % path.basename(sys.argv[0])
         impl = GenericArgparseImplementation(
