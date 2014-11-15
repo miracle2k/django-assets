@@ -26,10 +26,11 @@ class AssetsNode(template.Node):
     # For testing, to inject a mock bundle
     BundleClass = Bundle
 
-    def __init__(self, filters, output, debug, files, childnodes):
+    def __init__(self, filters, depends, output, debug, files, childnodes):
         self.childnodes = childnodes
         self.output = output
         self.files = files
+        self.depends = depends
         self.filters = filters
         self.debug = debug
 
@@ -62,6 +63,7 @@ class AssetsNode(template.Node):
             *[resolve_bundle(resolve_var(f)) for f in self.files],
             **{'output': resolve_var(self.output),
             'filters': resolve_var(self.filters),
+            'depends': resolve_var(self.depends),
             'debug': parse_debug_value(resolve_var(self.debug))})
 
     def render(self, context):
@@ -82,6 +84,7 @@ def assets(parser, token):
     filters = None
     output = None
     debug = None
+    depends = None
     files = []
 
     # parse the arguments
@@ -116,6 +119,8 @@ def assets(parser, token):
                           'template tag has been renamed to '
                           '"filters" for consistency reasons.',
                             ImminentDeprecationWarning)
+        elif name == 'depends':
+            depends = value
         # positional arguments are source files
         elif name is None:
             files.append(value)
@@ -125,7 +130,7 @@ def assets(parser, token):
     # capture until closing tag
     childnodes = parser.parse(("endassets",))
     parser.delete_first_token()
-    return AssetsNode(filters, output, debug, files, childnodes)
+    return AssetsNode(filters, depends, output, debug, files, childnodes)
 
 
 
