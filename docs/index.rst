@@ -83,6 +83,9 @@ simply define everything inside your template:
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
+You can also pass in ``depends`` through templatetags with a slightly
+modified comma-delimated syntax, e.g.
+``depends="myfile.js,path/to/file.js"``.
 
 The management command
 ~~~~~~~~~~~~~~~~~~~~~~

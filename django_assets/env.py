@@ -145,7 +145,7 @@ class DjangoResolver(Resolver):
         except ImportError:
             # Support pre-1.3 versions.
             finders = None
-    
+
         # Use the staticfiles finders to determine the absolute path
         if finders:
             if has_magic(item):
