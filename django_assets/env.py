@@ -212,14 +212,45 @@ def register(*a, **kw):
 
 # Finally, we'd like to autoload the ``assets`` module of each Django.
 try:
-    from django.utils.importlib import import_module
-except ImportError:
-    # django-1.0 compatibility
-    import warnings
-    warnings.warn('django-assets may not be compatible with Django versions '
-                  'earlier than 1.1', ImminentDeprecationWarning)
+    # polyfill for new django 1.6+ apps
+    from importlib import import_module as native_import_module
+
     def import_module(app):
-        return __import__(app, {}, {}, [app.split('.')[-1]]).__path__
+        try:
+            module = native_import_module(app)
+        except ImportError:
+            app = deduce_app_name(app)
+            module = native_import_module(app)
+        return module
+
+except ImportError:
+    try:
+        from django.utils.importlib import import_module
+
+    except ImportError:
+        # django-1.0 compatibility
+        import warnings
+        warnings.warn('django-assets may not be compatible with Django versions '
+                      'earlier than 1.1', ImminentDeprecationWarning)
+
+        def import_module(app):
+            return __import__(app, {}, {}, [app.split('.')[-1]]).__path__
+
+
+# polyfill for new django 1.6+ apps
+def deduce_app_name(app):
+    try:
+        app_array = app.split('.')
+        module_name = '.'.join(app_array[0:-1])
+        app_config_class = app_array[-1]
+        module = import_module(module_name)
+        # figure out the config
+        ImportedConfig = getattr(module, app_config_class)
+        return ImportedConfig.name
+    except ImportError:
+        return app
+
+    return app
 
 
 _ASSETS_LOADED = False
@@ -272,7 +303,8 @@ def autoload():
 
         # Step 3: import the app's assets file. If this has errors we
         # want them to bubble up.
-        import_module("%s.assets" % app)
+        app_name = deduce_app_name(app)
+        import_module("{}.assets".format(app_name))
         #if options.get('verbosity') > 1:
         #    print "assets module loaded"
 
