@@ -242,6 +242,8 @@ def deduce_app_name(app):
     try:
         app_array = app.split('.')
         module_name = '.'.join(app_array[0:-1])
+        if len(module_name) == 0:
+            return app
         app_config_class = app_array[-1]
         module = import_module(module_name)
         # figure out the config
