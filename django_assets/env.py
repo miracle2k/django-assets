@@ -305,8 +305,8 @@ def autoload():
 
         # Step 3: import the app's assets file. If this has errors we
         # want them to bubble up.
-        app_name = deduce_app_name(app)
-        import_module("{}.assets".format(app_name))
+        #app_name = deduce_app_name(app)
+        import_module("{}.assets".format(app))
         #if options.get('verbosity') > 1:
         #    print "assets module loaded"
 
