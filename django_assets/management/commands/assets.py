@@ -32,7 +32,7 @@ from webassets.script import (CommandError as AssetCommandError,
                               GenericArgparseImplementation)
 from django_assets.env import get_env, autoload
 from django_assets.loaders import get_django_template_dirs, DjangoLoader
-
+from django_assets.manifest import DjangoManifest  # noqa: enables the --manifest django option
 
 try:
     from django.core.management import LaxOptionParser
