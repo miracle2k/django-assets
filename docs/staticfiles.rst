@@ -92,3 +92,16 @@ define an ``ASSETS_ROOT`` setting that points to a different directory
 then ``STATIC_ROOT``. Only then will ``collectstatic`` be able to find the
 output files created with ``./manage.py build --parse-templates``, and
 process them into ``STATIC_ROOT``, like any other static file.
+
+``ManifestStaticFileStorage`` or White Noise
+--------------------------------------------
+
+If you are using Django's ``ManifestStaticFilesStorage`` or White Noise's
+``GzipManifestStaticFilesStorage`` then you must build your assets after
+calling ``collectstatic`` using the ``--manifest django`` option::
+
+    ./manage.py assets build --manifest django
+    
+This will add the built assets to Django's static files manifest. In particular,
+this ensures that White Noise realises they are cacheable static files and
+will add appropriate far-future expiry headers when serving them.
