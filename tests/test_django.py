@@ -321,7 +321,7 @@ class TestStaticFiles(TempEnvironmentHelper):
 class TestFilter(TempEnvironmentHelper):
 
     def test_template(self):
-        self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'})
+        self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'.encode('utf-8')})
         self.mkbundle('foo.html', output="out",
                       filters=get_filter('template', context={'num': 23232323})).build()
         # Depending on Django version "filesizeformat" may contain a breaking space
