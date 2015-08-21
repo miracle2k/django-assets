@@ -37,7 +37,7 @@ setup(
     description='Asset management for Django, to compress and merge '\
                 'CSS and Javascript files.',
     long_description=__doc__,
-    packages=find_packages(),
+    packages=find_packages(exclude=('tests',)),
     zip_safe=False,
     platforms='any',
     install_requires=[
