@@ -60,8 +60,11 @@ def get_django_template_dirs(loader_list=None):
         if loader in FILESYSTEM_LOADERS:
             template_dirs.extend(settings.TEMPLATE_DIRS)
         if loader in APPDIR_LOADERS:
-            from django.template.loaders.app_directories import app_template_dirs
-            template_dirs.extend(app_template_dirs)
+            from django.template.loaders import app_directories
+            if hasattr(app_directories, 'app_template_dirs'):
+                template_dirs.extend(app_directories.app_template_dirs)
+            elif hasattr(app_directories, 'get_app_template_dirs'):
+                template_dirs.extend(app_directories.get_app_template_dirs('templates'))
         if isinstance(loader, (list, tuple)) and len(loader) >= 2:
             # The cached loader uses the tuple syntax, but simply search all
             # tuples for nested loaders; thus possibly support custom ones too.
