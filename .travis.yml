@@ -1,18 +1,19 @@
 language: python
 python: 2.7
 env:
-  - TOX_ENV=py27-django17
-  - TOX_ENV=py27-django18
-  - TOX_ENV=py27-django19
-  - TOX_ENV=py33-django17
-  - TOX_ENV=py33-django18
-  - TOX_ENV=py33-django19
-  - TOX_ENV=py34-django17
-  - TOX_ENV=py37-django18
-  - TOX_ENV=py34-django19
-  - TOX_ENV=pypy-django17
-  - TOX_ENV=pypy-django18
-  - TOX_ENV=pypy-django19
+  - TOX_ENV=django17-py27
+  - TOX_ENV=django17-py33
+  - TOX_ENV=django17-py34
+  - TOX_ENV=django17-pypy
+
+  - TOX_ENV=django18-py27
+  - TOX_ENV=django18-py33
+  - TOX_ENV=django18-py34
+  - TOX_ENV=django18-pypy
+
+  - TOX_ENV=django19-py27
+  - TOX_ENV=django19-py34
+  - TOX_ENV=django19-py35
 install:
   - pip install tox
 script:
@@ -20,3 +21,9 @@ script:
 branches:
   only:
     - master
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - python3.5
