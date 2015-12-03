@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from nose import SkipTest
 from nose.tools import assert_raises, assert_raises_regexp
 
-import django
 from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.template import Template, Context
 from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
@@ -59,8 +59,8 @@ class TempEnvironmentHelper(BaseTempEnvironmentHelper):
         # self.override_settings.enable()
 
     def teardown(self):
-        #self.override_settings.disable()
-        pass
+        super(TempEnvironmentHelper, self).teardown()
+        finders.get_finder.cache_clear()
 
 
 def delsetting(name):
@@ -241,15 +241,10 @@ class TestStaticFiles(TempEnvironmentHelper):
         settings.STATIC_URL = '/media/'
         settings.INSTALLED_APPS += ('django.contrib.staticfiles',)
         settings.STATICFILES_DIRS = tuple(self.create_directories('foo', 'bar'))
-        settings.STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
+        if 'django_assets.finders.AssetsFinder' not in settings.STATICFILES_FINDERS:
+            settings.STATICFILES_FINDERS += ('django_assets.finders.AssetsFinder',)
         self.create_files({'foo/file1': 'foo', 'bar/file2': 'bar'})
         settings.ASSETS_DEBUG = True
-
-        # Reset the finders cache after each run, since our
-        # STATICFILES_DIRS change every time.
-        if django.VERSION < (1, 7):
-            from django.contrib.staticfiles import finders
-            finders._finders.clear()
 
     def test_build(self):
         """Finders are used to find source files.
