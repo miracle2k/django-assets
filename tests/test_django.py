@@ -51,29 +51,9 @@ class TempEnvironmentHelper(BaseTempEnvironmentHelper):
         self.env.cache = False
         self.env.manifest = False
 
-        # Setup a temporary settings object
-        # TODO: This should be used (from 1.4), but the tests need
-        # to run on 1.3 as well.
-        # from django.test.utils import override_settings
-        # self.override_settings = override_settings()
-        # self.override_settings.enable()
-
     def teardown(self):
         super(TempEnvironmentHelper, self).teardown()
         finders.get_finder.cache_clear()
-
-
-def delsetting(name):
-    """Helper to delete a Django setting from the settings
-    object.
-
-    Required because the Django 1.1. LazyObject does not implement
-    __delattr__.
-    """
-    if '__delattr__' in settings.__class__.__dict__:
-        delattr(settings, name)
-    else:
-        delattr(settings._wrapped, name)
 
 
 class TestConfig(object):
@@ -97,7 +77,7 @@ class TestConfig(object):
         get_env().directory = 'BAR'
         assert settings.ASSETS_ROOT == 'BAR'
         # Pointing to STATIC_ROOT
-        delsetting('ASSETS_ROOT')
+        delattr(settings, 'ASSETS_ROOT')
         assert get_env().directory.endswith('FOO_STATIC')
         get_env().directory = 'BAR'
         assert settings.STATIC_ROOT == 'BAR'

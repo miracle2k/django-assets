@@ -4,12 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django_assets.env import get_env
 from webassets.exceptions import BundleError
 
-try:
-    # Django 1.4
-    from django.contrib.staticfiles.utils import matches_patterns
-except ImportError:
-    # Django 1.3
-    from django.contrib.staticfiles.utils import is_ignored as matches_patterns
+from django.contrib.staticfiles.utils import matches_patterns
 
 
 class AssetsFileStorage(FileSystemStorage):

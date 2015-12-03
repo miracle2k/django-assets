@@ -1,15 +1,16 @@
 import imp
 import threading
+from importlib import import_module
+
+from django.contrib.staticfiles import finders
 from django.conf import settings
 from webassets.env import (
     BaseEnvironment, ConfigStorage, Resolver, url_prefix_join)
-from webassets.exceptions import ImminentDeprecationWarning
 
 from django_assets.glob import Globber, has_magic
 
 
 __all__ = ('register',)
-
 
 
 class DjangoConfigStorage(ConfigStorage):
@@ -27,9 +28,6 @@ class DjangoConfigStorage(ConfigStorage):
     }
 
     def _transform_key(self, key):
-        # STATIC_* are the new Django 1.3 settings,
-        # MEDIA_* was used in earlier versions.
-
         if key.lower() == 'directory':
             if hasattr(settings, 'ASSETS_ROOT'):
                 return 'ASSETS_ROOT'
@@ -112,13 +110,6 @@ class DjangoResolver(Resolver):
         # The staticfiles finder system can't do globs, but we can
         # access the storages behind the finders, and glob those.
 
-        # We can't import too early because of unit tests
-        try:
-            from django.contrib.staticfiles import finders
-        except ImportError:
-            # Support pre-1.3 versions.
-            finders = None
-
         for finder in finders.get_finders():
             # Builtin finders use either one of those attributes,
             # though this does seem to be informal; custom finders
@@ -139,21 +130,12 @@ class DjangoResolver(Resolver):
         if not self.use_staticfiles:
             return Resolver.search_for_source(self, ctx, item)
 
-        # We can't import too early because of unit tests
-        try:
-            from django.contrib.staticfiles import finders
-        except ImportError:
-            # Support pre-1.3 versions.
-            finders = None
-
-        # Use the staticfiles finders to determine the absolute path
-        if finders:
-            if has_magic(item):
-                return list(self.glob_staticfiles(item))
-            else:
-                f = finders.find(item)
-                if f is not None:
-                    return f
+        if has_magic(item):
+            return list(self.glob_staticfiles(item))
+        else:
+            f = finders.find(item)
+            if f is not None:
+                return f
 
         raise IOError(
             "'%s' not found (using staticfiles finders)" % item)
@@ -210,51 +192,6 @@ def register(*a, **kw):
     return get_env().register(*a, **kw)
 
 
-# Finally, we'd like to autoload the ``assets`` module of each Django.
-try:
-    # polyfill for new django 1.6+ apps
-    from importlib import import_module as native_import_module
-
-    def import_module(app):
-        try:
-            module = native_import_module(app)
-        except ImportError:
-            app = deduce_app_name(app)
-            module = native_import_module(app)
-        return module
-
-except ImportError:
-    try:
-        from django.utils.importlib import import_module
-
-    except ImportError:
-        # django-1.0 compatibility
-        import warnings
-        warnings.warn('django-assets may not be compatible with Django versions '
-                      'earlier than 1.1', ImminentDeprecationWarning)
-
-        def import_module(app):
-            return __import__(app, {}, {}, [app.split('.')[-1]]).__path__
-
-
-# polyfill for new django 1.6+ apps
-def deduce_app_name(app):
-    try:
-        app_array = app.split('.')
-        module_name = '.'.join(app_array[0:-1])
-        if len(module_name) == 0:
-            return app
-        app_config_class = app_array[-1]
-        module = import_module(module_name)
-        # figure out the config
-        ImportedConfig = getattr(module, app_config_class)
-        return ImportedConfig.name
-    except ImportError:
-        return app
-
-    return app
-
-
 _ASSETS_LOADED = False
 
 def autoload():
@@ -278,8 +215,6 @@ def autoload():
         # modules may be imported different ways (think zip files) --
         # so we need to get the app's __path__ and look for
         # admin.py on that path.
-        #if options.get('verbosity') > 1:
-        #    print "\t%s..." % app,
 
         # Step 1: find out the app's __path__ Import errors here will
         # (and should) bubble up, but a missing __path__ (which is
@@ -288,8 +223,6 @@ def autoload():
         try:
             app_path = import_module(app).__path__
         except AttributeError:
-            #if options.get('verbosity') > 1:
-            #    print "cannot inspect app"
             continue
 
         # Step 2: use imp.find_module to find the app's assets.py.
@@ -299,16 +232,12 @@ def autoload():
         try:
             imp.find_module('assets', app_path)
         except ImportError:
-            #if options.get('verbosity') > 1:
-            #    print "no assets module"
             continue
 
         # Step 3: import the app's assets file. If this has errors we
         # want them to bubble up.
         #app_name = deduce_app_name(app)
         import_module("{}.assets".format(app))
-        #if options.get('verbosity') > 1:
-        #    print "assets module loaded"
 
     # Load additional modules.
     for module in getattr(settings, 'ASSETS_MODULES', []):
