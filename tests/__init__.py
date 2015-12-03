@@ -1,6 +1,6 @@
 from nose import SkipTest
 try:
-    from django.conf import settings
+    import django
 except ImportError:
     raise SkipTest()
 
@@ -16,3 +16,7 @@ except ImportError:
 
 from django.conf import settings
 settings.configure(INSTALLED_APPS=['django_assets'])
+
+if django.VERSION >= (1, 7):
+    from django.apps import apps
+    apps.populate(settings.INSTALLED_APPS)

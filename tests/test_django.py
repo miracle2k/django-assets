@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from nose import SkipTest
 from nose.tools import assert_raises, assert_raises_regexp
 
+import django
 from django.conf import settings
 from django.template import Template, Context
 from django_assets.loaders import DjangoLoader
@@ -246,8 +247,9 @@ class TestStaticFiles(TempEnvironmentHelper):
 
         # Reset the finders cache after each run, since our
         # STATICFILES_DIRS change every time.
-        from django.contrib.staticfiles import finders
-        finders._finders.clear()
+        if django.VERSION < (1, 7):
+            from django.contrib.staticfiles import finders
+            finders._finders.clear()
 
     def test_build(self):
         """Finders are used to find source files.
