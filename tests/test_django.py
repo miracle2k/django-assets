@@ -1,8 +1,7 @@
-# coding: utf-8
-from __future__ import with_statement
-
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from nose import SkipTest
-from nose.tools import assert_raises
+from nose.tools import assert_raises, assert_raises_regexp
 
 from django.conf import settings
 from django.template import Template, Context
@@ -10,19 +9,16 @@ from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
 from django_assets.env import get_env
 from django_assets.env import reset as django_env_reset
-from tests.helpers import (
+from django.utils import six
+
+from webassets.test import (
     TempDirHelper,
-    TempEnvironmentHelper as BaseTempEnvironmentHelper, assert_raises_regexp)
+    TempEnvironmentHelper as BaseTempEnvironmentHelper,
+)
 from webassets.filter import get_filter
-from webassets.exceptions import BundleError, ImminentDeprecationWarning
+from webassets.exceptions import BundleError
 
-from tests.helpers import check_warnings
-
-try:
-    from django.templatetags.assets import AssetsNode
-except ImportError:
-    # Since #12295, Django no longer maps the tags.
-    from django_assets.templatetags.assets import AssetsNode
+from django_assets.templatetags.assets import AssetsNode
 
 
 class TempEnvironmentHelper(BaseTempEnvironmentHelper):
@@ -319,10 +315,25 @@ class TestStaticFiles(TempEnvironmentHelper):
 
 
 class TestFilter(TempEnvironmentHelper):
+    def get(self, name):
+        """Return the given file's contents.
+        """
+        if six.PY2:
+            return super(TestFilter, self).get(name).decode('utf-8')
+
+        import codecs
+        with codecs.open(self.path(name), "r", "utf-8") as f:
+            return f.read()
 
     def test_template(self):
-        self.create_files({'media/foo.html': u'Ünicôdé-Chèck: {{ num|filesizeformat }}'.encode('utf-8')})
-        self.mkbundle('foo.html', output="out",
-                      filters=get_filter('template', context={'num': 23232323})).build()
+        self.create_files({
+            'media/foo.html': 'Ünicôdé-Chèck: {{ num|filesizeformat }}',
+        })
+        self.mkbundle(
+            'foo.html',
+            output="out",
+            filters=get_filter('template', context={'num': 23232323}),
+        ).build()
+
         # Depending on Django version "filesizeformat" may contain a breaking space
         assert self.get('media/out') in ('Ünicôdé-Chèck: 22.2\xa0MB', 'Ünicôdé-Chèck: 22.2 MB')
