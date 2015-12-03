@@ -15,7 +15,7 @@ except ImportError:
 # first.
 
 from django.conf import settings
-settings.configure(INSTALLED_APPS=['django_assets'])
+settings.configure(INSTALLED_APPS=['django_assets', 'django.contrib.staticfiles'])
 
 if django.VERSION >= (1, 7):
     from django.apps import apps
