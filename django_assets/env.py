@@ -46,6 +46,11 @@ class DjangoConfigStorage(ConfigStorage):
                 return 'STATIC_URL'
             return 'MEDIA_URL'
 
+        if key.lower() == 'debug':
+            if hasattr(settings, 'ASSETS_DEBUG'):
+                return 'ASSETS_DEBUG'
+            return 'DEBUG'
+
         return self._mapping.get(key.lower(), key.upper())
 
     def __contains__(self, key):
@@ -105,7 +110,7 @@ class DjangoResolver(Resolver):
 
     @property
     def use_staticfiles(self):
-        return settings.ASSETS_DEBUG and \
+        return getattr(settings, 'ASSETS_DEBUG', settings.DEBUG) and \
             'django.contrib.staticfiles' in settings.INSTALLED_APPS
 
     def glob_staticfiles(self, item):
