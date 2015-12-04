@@ -51,6 +51,10 @@ they will automatically be picked up:
     If you want to define assets in a different place, you can use the
     :data:`~django_assets.settings.ASSETS_MODULES` setting.
 
+    Some filters have external dependecies, including jsmin_.
+
+.. _jsmin: https://pypi.python.org/pypi/jsmin
+
 
 Finally, include the bundle you defined in the appropriate place within your
 templates:
@@ -108,6 +112,22 @@ your templates, rather than in code. You then need to use the
 
 ``django-assets`` can integrate with Django's
 :doc:`django.contrib.staticfiles <staticfiles>`.
+
+
+Testing pipeling in development
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To test project using bundle please do the following:
+
+- set :data:`~django_assets.settings.ASSETS_DEBUG` to False
+- set STATIC_ROOT_ accordingly
+- add ``django_assets.finders.AssetsFinder`` to your ``STATICFILES_FINDERS``. As it's shown in :ref:`django-assets-staticfiles`
+- run `python manage.py collectstatic`
+- run `python manage.py assets build`
+
+At this point runserver should be useing build bundles
+
+.. _STATIC_ROOT: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATIC_ROOT
 
 
 Jinja2 support
