@@ -7,8 +7,6 @@ try:
 
     class DjangoManifest(Manifest):
         """Stores version data in Django's ManifestStaticFileStorage.
-
-        Requires Django 1.7 or later.
         """
 
         id = 'django'

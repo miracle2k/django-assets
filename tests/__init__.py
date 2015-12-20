@@ -14,9 +14,8 @@ except ImportError:
 # module-global imports in our test submodules still run
 # first.
 
+from django.apps import apps
 from django.conf import settings
-settings.configure(INSTALLED_APPS=['django_assets', 'django.contrib.staticfiles'])
 
-if django.VERSION >= (1, 7):
-    from django.apps import apps
-    apps.populate(settings.INSTALLED_APPS)
+settings.configure(INSTALLED_APPS=['django_assets', 'django.contrib.staticfiles'])
+apps.populate(settings.INSTALLED_APPS)

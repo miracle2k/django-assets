@@ -41,7 +41,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'Django>=1.1',
+        'Django>=1.7',
         'webassets%s' % webassets_version
         ],
     classifiers=[

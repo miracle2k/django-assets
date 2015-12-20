@@ -8,27 +8,13 @@ except NameError:
     from sets import Set as set
 
 from django_assets.templatetags.assets import AssetsNode as AssetsNodeOriginal
-try:
-    from django.templatetags.assets import AssetsNode as AssetsNodeMapped
-except ImportError:
-    # Since Django #12295, custom templatetags are no longer mapped into
-    # the Django namespace. Support both versions.
-    AssetsNodeMapped = None
+AssetsNodeMapped = None
 AssetsNodeClasses = tuple(
     filter(lambda c: bool(c), (AssetsNodeOriginal, AssetsNodeMapped))
 )
 
 
 __all__ = ('DjangoLoader', 'get_django_template_dirs',)
-
-
-def _shortpath(abspath):
-    """Make an absolute path relative to the project's settings module,
-    which would usually be the project directory.
-    """
-    b = os.path.dirname(os.path.normpath(sys.modules[settings.SETTINGS_MODULE].__file__))
-    p = os.path.normpath(abspath)
-    return p[len(os.path.commonprefix([b, p])):]
 
 
 def uniq(seq):
@@ -42,12 +28,10 @@ def uniq(seq):
 
 
 FILESYSTEM_LOADERS = [
-    'django.template.loaders.filesystem.load_template_source', # <= 1.1
-    'django.template.loaders.filesystem.Loader',                 # > 1.2
+    'django.template.loaders.filesystem.Loader',
 ]
 APPDIR_LOADERS = [
-    'django.template.loaders.app_directories.load_template_source', # <= 1.1
-    'django.template.loaders.app_directories.Loader'            # > 1.2
+    'django.template.loaders.app_directories.Loader',
 ]
 def get_django_template_dirs(loader_list=None):
     """Build a list of template directories based on configured loaders.
