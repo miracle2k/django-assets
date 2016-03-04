@@ -21,11 +21,10 @@ Usage:
         right away. Useful for cases where building takes some time.
 """
 
+import argparse
 import sys
 from os import path
 import logging
-from optparse import make_option
-import django
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -35,85 +34,19 @@ from django_assets.env import get_env, autoload
 from django_assets.loaders import get_django_template_dirs, DjangoLoader
 from django_assets.manifest import DjangoManifest  # noqa: enables the --manifest django option
 
-try:
-    from django.core.management import LaxOptionParser
-except ImportError:
-    from optparse import OptionParser
-
-    class LaxOptionParser(OptionParser):
-        """
-        An option parser that doesn't raise any errors on unknown options.
-        This is needed because the --settings and --pythonpath options affect
-        the commands (and thus the options) that are available to the user.
-        Backported from Django 1.7.x
-        """
-        def error(self, msg):
-            pass
-
-        def print_help(self):
-            """Output nothing.
-            The lax options are included in the normal option parser, so under
-            normal usage, we don't need to print the lax options.
-            """
-            pass
-
-        def print_lax_help(self):
-            """Output the basic options available to every command.
-            This just redirects to the default print_help() behavior.
-            """
-            OptionParser.print_help(self)
-
-        def _process_args(self, largs, rargs, values):
-            """
-            Overrides OptionParser._process_args to exclusively handle default
-            options and ignore args and other options.
-            This overrides the behavior of the super class, which stop parsing
-            at the first unrecognized option.
-            """
-            while rargs:
-                arg = rargs[0]
-                try:
-                    if arg[0:2] == "--" and len(arg) > 2:
-                        # process a single long option (possibly with value(s))
-                        # the superclass code pops the arg off rargs
-                        self._process_long_opt(rargs, values)
-                    elif arg[:1] == "-" and len(arg) > 1:
-                        # process a cluster of short options (possibly with
-                        # value(s) for the last one only)
-                        # the superclass code pops the arg off rargs
-                        self._process_short_opts(rargs, values)
-                    else:
-                        # it's either a non-default option or an arg
-                        # either way, add it to the args list so we can keep
-                        # dealing with options
-                        del rargs[0]
-                        raise Exception
-                except:  # Needed because we might need to catch a SystemExit
-                    largs.append(arg)
-
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--parse-templates', action='store_true',
-            help='Search project templates to find bundles. You need '
-                 'this if you directly define your bundles in templates.'),
-    )
     help = 'Manage assets.'
-    args = 'subcommand'
-    if django.VERSION >= (1, 7):
-        requires_system_checks = False
-    else:
-        requires_model_validation = False
+	requires_system_checks = False
 
-    def create_parser(self, prog_name, subcommand):
-        # Overwrite parser creation with a LaxOptionParser that will
-        # ignore arguments it doesn't know, allowing us to pass those
-        # along to the webassets command.
-        # Hooking into run_from_argv() would be another thing to try
-        # if this turns out to be problematic.
-        parser = BaseCommand.create_parser(self, prog_name, subcommand)
-        parser.__class__ = LaxOptionParser
-        return parser
+    def add_arguments(self, parser):
+        # parser.add_argument('poll_id', nargs='+', type=str)
+        parser.add_argument('--parse-templates', action='store_true',
+            help='Search project templates to find bundles. You need '
+                 'this if you directly define your bundles in templates.')
+
+        # this collects the unrecognized arguments to pass through to webassets
+        parser.add_argument('args', nargs=argparse.REMAINDER)
 
     def handle(self, *args, **options):
         # Due to the use of LaxOptionParser ``args`` now contains all

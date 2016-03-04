@@ -2,6 +2,7 @@ import imp
 import threading
 from importlib import import_module
 
+from django.apps import apps
 from django.contrib.staticfiles import finders
 from django.conf import settings
 from webassets.env import (
@@ -209,7 +210,7 @@ def autoload():
     # dependency.
     from django.conf import settings
 
-    for app in settings.INSTALLED_APPS:
+    for app in apps.get_app_configs():
         # For each app, we need to look for an assets.py inside that
         # app's package. We can't use os.path here -- recall that
         # modules may be imported different ways (think zip files) --
@@ -221,23 +222,23 @@ def autoload():
         # legal, but weird) fails silently -- apps that do weird things
         # with __path__ might need to roll their own registration.
         try:
-            app_path = import_module(app).__path__
+            app_path = app.path
         except AttributeError:
             continue
 
         # Step 2: use imp.find_module to find the app's assets.py.
         # For some reason imp.find_module raises ImportError if the
         # app can't be found but doesn't actually try to import the
-        # module. So skip this app if its assetse.py doesn't exist
+        # module. So skip this app if its assets.py doesn't exist
         try:
-            imp.find_module('assets', app_path)
+            imp.find_module('assets', [app_path])
         except ImportError:
             continue
 
         # Step 3: import the app's assets file. If this has errors we
         # want them to bubble up.
         #app_name = deduce_app_name(app)
-        import_module("{}.assets".format(app))
+        import_module("{}.assets".format(app.name))
 
     # Load additional modules.
     for module in getattr(settings, 'ASSETS_MODULES', []):
