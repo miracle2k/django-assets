@@ -25,6 +25,7 @@ import sys
 from os import path
 import logging
 from optparse import make_option
+import django
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -99,7 +100,10 @@ class Command(BaseCommand):
     )
     help = 'Manage assets.'
     args = 'subcommand'
-    requires_model_validation = False
+    if django.VERSION >= (1, 7):
+        requires_system_checks = False
+    else:
+        requires_model_validation = False
 
     def create_parser(self, prog_name, subcommand):
         # Overwrite parser creation with a LaxOptionParser that will
