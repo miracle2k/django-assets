@@ -37,6 +37,15 @@ def get_django_template_dirs(loader_list=None):
     """Build a list of template directories based on configured loaders.
     """
     if not loader_list:
+        try:
+            from django.template import engines
+        except ImportError:
+            pass
+        else:
+            # Django >=1.8
+            return uniq(sum((list(engines[e].template_dirs) for e in engines), []))
+
+        # Django <1.8
         loader_list = settings.TEMPLATE_LOADERS
 
     template_dirs = []
