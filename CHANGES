@@ -1,3 +1,8 @@
+0.12 (2016-07-13)
+   - Support Django 1.8 (various contributors).
+   - Drop support for Django 1.6.
+   - Windows fixes.
+
 0.11 (2015-08-21)
     - Match webassets 0.11.
 
