@@ -149,6 +149,8 @@ class DjangoResolver(Resolver):
         # parent implementation does, will not help. Instead, we can
         # assume that the url is the root url + the original relative
         # item that was specified (and searched for using the finders).
+        import os
+        item = item.replace(os.sep, "/")
         return url_prefix_join(ctx.url, item)
 
 
