@@ -20,6 +20,8 @@ import sys, os
 
 # make sure we are documenting the local version with autodoc
 sys.path.insert(0, os.path.abspath('..'))
+from django.conf import settings
+settings.configure()
 import django_assets
 
 # -- General configuration -----------------------------------------------------

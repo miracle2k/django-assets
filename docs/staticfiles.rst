@@ -48,6 +48,7 @@ As a refresher, this is how Django's ``staticfiles`` application works:
           will not be picked up until you have run ``collectstatic``.
 
 
+.. _django-assets-staticfiles:
 
 Specific steps to make ``django-assets`` work with staticfiles
 --------------------------------------------------------------
@@ -92,6 +93,7 @@ define an ``ASSETS_ROOT`` setting that points to a different directory
 then ``STATIC_ROOT``. Only then will ``collectstatic`` be able to find the
 output files created with ``./manage.py build --parse-templates``, and
 process them into ``STATIC_ROOT``, like any other static file.
+
 
 ``ManifestStaticFileStorage`` or White Noise
 --------------------------------------------
