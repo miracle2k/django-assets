@@ -19,6 +19,7 @@ class DjangoConfigStorage(ConfigStorage):
     _mapping = {
         'debug': 'ASSETS_DEBUG',
         'cache': 'ASSETS_CACHE',
+        'cache_file_mode': 'ASSETS_CACHE_FILE_MODE',
         'updater': 'ASSETS_UPDATER',
         'auto_build': 'ASSETS_AUTO_BUILD',
         'url_expire': 'ASSETS_URL_EXPIRE',

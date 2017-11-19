@@ -38,11 +38,12 @@ def get_django_template_dirs(loader_list=None):
     """
     if not loader_list:
         try:
-            from django.template import engines
+            from django.template.utils import EngineHandler
         except ImportError:
             pass
         else:
             # Django >=1.8
+            engines = EngineHandler()
             return uniq(sum((list(engines[e].template_dirs) for e in engines), []))
 
         # Django <1.8

@@ -32,6 +32,8 @@ module to modify the behaviour of ``webassets``.
 
 .. autodata:: ASSETS_CACHE
 
+.. autodata:: ASSETS_CACHE_FILE_MODE
+
 .. data:: ASSETS_JINJA2_EXTENSIONS
 
     This is needed in some cases when you want to use ``django-assets`` with

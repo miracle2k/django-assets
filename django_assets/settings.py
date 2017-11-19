@@ -26,6 +26,7 @@ class docwrap(object):
 
 ASSETS_DEBUG = Environment.debug
 ASSETS_CACHE = Environment.cache
+ASSETS_CACHE_FILE_MODE = Environment.cache_file_mode
 ASSETS_AUTO_BUILD = Environment.auto_build
 ASSETS_URL_EXPIRE = Environment.url_expire
 ASSETS_MANIFEST = Environment.manifest

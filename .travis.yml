@@ -1,9 +1,11 @@
+dist: precise
 language: python
-python: 2.7
+python:
+  - "2.7"
 env:
   - TOX_ENV=django18-py27
-  - TOX_ENV=django18-py33
   - TOX_ENV=django18-py34
+  - TOX_ENV=django18-py35
   - TOX_ENV=django18-pypy
 
   - TOX_ENV=django19-py27
