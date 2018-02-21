@@ -37,7 +37,7 @@ try:
             if output:
                 # foo.hash.js
                 name_with_hash, ext = os.path.splitext(output)
-                output = os.path.splitext(name_with_hash)[1]
+                output = os.path.splitext(name_with_hash)[1].strip('.')
 
             return output
 
