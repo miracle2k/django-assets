@@ -1,15 +1,19 @@
+dist: xenial
+sudo: required
 language: python
 python:
   - "2.7"
 env:
   - TOX_ENV=django18-py27
-  - TOX_ENV=django18-py34
   - TOX_ENV=django18-py35
+  - TOX_ENV=django18-py36
+  - TOX_ENV=django18-py37
   - TOX_ENV=django18-pypy
 
   - TOX_ENV=django19-py27
-  - TOX_ENV=django19-py34
   - TOX_ENV=django19-py35
+  - TOX_ENV=django19-py36
+  - TOX_ENV=django19-py37
 install:
   - pip install tox
 script:
