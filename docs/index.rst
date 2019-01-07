@@ -118,7 +118,7 @@ templating language.
 
 
 Settings
-~~~~~~~~~~~~
+~~~~~~~~
 
 See :doc:`settings` for on overview of Django configuration values.
 
