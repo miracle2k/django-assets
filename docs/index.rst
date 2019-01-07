@@ -122,6 +122,20 @@ Settings
 
 See :doc:`settings` for on overview of Django configuration values.
 
+pytest
+------
+To assure django-assets settings aren't removed after pytest runs,
+add the fixture ``set_django_assets_env`` (included in this package).
+If you want to run it automatically each test, add a *conftest.py*
+in the hierarchy where you need it for your django tests:
+
+.. code-block:: python
+
+   import pytest
+
+   @pytest.fixture(autouse=True)
+   def django_assets_env(set_django_assets_env):
+       pass  # set django-assets
 
 webassets documentation
 -----------------------
