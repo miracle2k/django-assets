@@ -1,6 +1,6 @@
-import imp
 import threading
 from importlib import import_module
+from importlib.util import find_spec as importlib_find
 
 from django.apps import apps
 from django.contrib.staticfiles import finders
@@ -196,6 +196,25 @@ def register(*a, **kw):
     return get_env().register(*a, **kw)
 
 
+def module_has_submodule(package, module_name):
+    """See if 'module' is in 'package'."""
+    try:
+        package_name = package.__name__
+        package_path = package.__path__
+    except AttributeError:
+        # package isn't a package.
+        return False
+
+    full_module_name = package_name + '.' + module_name
+    try:
+        return importlib_find(full_module_name, package_path) is not None
+    except (ModuleNotFoundError, AttributeError):
+        # When module_name is an invalid dotted path, Python raises
+        # ModuleNotFoundError. AttributeError is raised on PY36 (fixed in PY37)
+        # if the penultimate part of the path is not a package.
+        return False
+
+
 _ASSETS_LOADED = False
 
 def autoload():
@@ -215,33 +234,16 @@ def autoload():
 
     for app in apps.get_app_configs():
         # For each app, we need to look for an assets.py inside that
-        # app's package. We can't use os.path here -- recall that
-        # modules may be imported different ways (think zip files) --
-        # so we need to get the app's __path__ and look for
-        # admin.py on that path.
+        # app's package.
 
-        # Step 1: find out the app's __path__ Import errors here will
-        # (and should) bubble up, but a missing __path__ (which is
-        # legal, but weird) fails silently -- apps that do weird things
-        # with __path__ might need to roll their own registration.
         try:
-            app_path = app.path
-        except AttributeError:
-            continue
-
-        # Step 2: use imp.find_module to find the app's assets.py.
-        # For some reason imp.find_module raises ImportError if the
-        # app can't be found but doesn't actually try to import the
-        # module. So skip this app if its assets.py doesn't exist
-        try:
-            imp.find_module('assets', [app_path])
-        except ImportError:
-            continue
-
-        # Step 3: import the app's assets file. If this has errors we
-        # want them to bubble up.
-        #app_name = deduce_app_name(app)
-        import_module("{}.assets".format(app.name))
+            import_module("{}.assets".format(app.name))
+        except Exception:
+            # Decide whether to bubble up this error. If the app just
+            # doesn't have the module in question, we can ignore the error
+            # attempting to import it, otherwise we want it to bubble up.
+            if module_has_submodule(app.module, 'assets'):
+                raise
 
     # Load additional modules.
     for module in getattr(settings, 'ASSETS_MODULES', []):
