@@ -1,6 +1,10 @@
 2.0 (2019-12-20)
-   The list of supported Python/Django versions changed completely, and we'd
-   like to do proper semver from now on, so this is a big jump.
+   The list of officially supported and tested ython/Django versions changed,
+   and we'd like to do proper semver from now on, which is why there is this
+   big jump.
+
+   Python 2.7 support has been dropped, otherwise there are no real breaking
+   changes in the code itself.
 
    - Add cache_file_mode (Zia Fazal).
    - Support Django versions still under maintenance.
