@@ -182,10 +182,12 @@ class TestLoader(TempDirHelper):
         TempDirHelper.setup(self)
 
         self.loader = DjangoLoader()
-        settings.TEMPLATE_LOADERS = [
-            'django.template.loaders.filesystem.Loader',
-        ]
-        settings.TEMPLATE_DIRS = [self.tempdir]
+        settings.TEMPLATES[0]['OPTIONS'] = {
+            'loaders': (
+                'django.template.loaders.filesystem.Loader'
+            ),
+        }
+        settings.TEMPLATES[0]['DIRS'] = [self.tempdir]
 
     def test(self):
         bundles = self.loader.load_bundles()
@@ -295,7 +297,7 @@ class TestFilter(TempEnvironmentHelper):
     def get(self, name):
         """Return the given file's contents.
         """
-        if six.PY2:
+        if not six.PY3:
             return super(TestFilter, self).get(name).decode('utf-8')
 
         import codecs

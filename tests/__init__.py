@@ -17,5 +17,8 @@ except ImportError:
 from django.apps import apps
 from django.conf import settings
 
-settings.configure(INSTALLED_APPS=['django_assets', 'django.contrib.staticfiles'])
+settings.configure(
+    INSTALLED_APPS=['django_assets', 'django.contrib.staticfiles'],
+    TEMPLATES=[{'BACKEND': 'django.template.backends.django.DjangoTemplates'}]
+)
 apps.populate(settings.INSTALLED_APPS)
