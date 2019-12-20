@@ -1,3 +1,10 @@
+2.0 (2019-12-20)
+   The list of supported Python/Django versions changed completely, and we'd
+   like to do proper semver from now on, so this is a big jump.
+
+   - Add cache_file_mode (Zia Fazal).
+   - Support Django versions still under maintenance.
+
 0.12 (2016-07-13)
    - Support Django 1.8 (various contributors).
    - Drop support for Django 1.6.
@@ -10,7 +17,6 @@
     - Improve staticfiles/testing integration.
     - Support Python 3.
     - Face race condition during assets.py collection.
-
 
 0.8 (2012-11-23)
     Based on 0.7-state from webassets core repository.
