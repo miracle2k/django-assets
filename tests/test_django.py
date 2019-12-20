@@ -10,7 +10,7 @@ from django_assets.loaders import DjangoLoader
 from django_assets import Bundle, register as django_env_register
 from django_assets.env import get_env
 from django_assets.env import reset as django_env_reset
-from django.utils import six
+from webassets import six
 
 from webassets.test import (
     TempDirHelper,
