@@ -1,26 +1,19 @@
-dist: precise
+dist: xenial
+sudo: required
 language: python
+cache: pip
 python:
-  - "2.7"
-env:
-  - TOX_ENV=django18-py27
-  - TOX_ENV=django18-py34
-  - TOX_ENV=django18-py35
-  - TOX_ENV=django18-pypy
-
-  - TOX_ENV=django19-py27
-  - TOX_ENV=django19-py34
-  - TOX_ENV=django19-py35
+- 2.7
+- 3.4
+- 3.5
+- 3.6
+- 3.7
+- 3.8
+- pypy
 install:
-  - pip install tox
+  - pip install tox-travis
 script:
-  - tox -e $TOX_ENV
+  - tox
 branches:
   only:
     - master
-addons:
-  apt:
-    sources:
-      - deadsnakes
-    packages:
-      - python3.5
