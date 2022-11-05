@@ -37,7 +37,7 @@ from django_assets.manifest import DjangoManifest  # noqa: enables the --manifes
 
 class Command(BaseCommand):
     help = 'Manage assets.'
-    requires_system_checks = False
+    requires_system_checks = []
 
     def add_arguments(self, parser):
         # parser.add_argument('poll_id', nargs='+', type=str)
