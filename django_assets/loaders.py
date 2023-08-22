@@ -107,6 +107,6 @@ class DjangoLoader(GlobLoader):
                     and node.nodelist\
                     or []:
                         _recurse_node(subnode)
-            for node in t:  # don't move into _recurse_node, ``Template`` has a .nodelist attribute
+            for node in t.nodelist:  # don't move into _recurse_node, ``Template`` has a .nodelist attribute
                 _recurse_node(node)
             return result
